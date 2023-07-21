@@ -12,12 +12,18 @@ struct Event *create_event(char *value_name, enum ValueType value_type, union Va
                                 enum CompType comp_type, char *email, char *email_password, 
                                 char *message, char **recipients, int recipients_count) 
 {
+        if (value_type == STRING && comp_type != EQUAL && comp_type != NOT_EQUAL) {
+                syslog(LOG_ERR, "'string' values can be compared using only 'equal' or 'not_equal'");
+                return NULL;
+        }
+
         struct Event *event = (struct Event *)malloc(sizeof(struct Event));
         if (event == NULL)
                 return NULL;
 
         event->value_type = value_type;
         event->comp_type = comp_type;
+
         event->recipients = (char (*)[])recipients;
         event->recipients_count = recipients_count;
 
@@ -75,20 +81,13 @@ unsigned condition_met(union Value actual_value, union Value comp_value, enum Va
                 }
         } else if (value_type == STRING) {
                 switch (comp_type) {
-                case LESS:
-                        return strcmp(actual_value.string, comp_value.string) < 0;
-                case GREATER:
-                        return strcmp(actual_value.string, comp_value.string) > 0;
-                case LESS_EQUAL:
-                        return strcmp(actual_value.string, comp_value.string) <= 0;
-                case GREATER_EQUAL:
-                        return strcmp(actual_value.string, comp_value.string) >= 0;
                 case EQUAL:
                         return strcmp(actual_value.string, comp_value.string) == 0;
                 case NOT_EQUAL:
                         return strcmp(actual_value.string, comp_value.string) != 0;
                 }
         }
+        return 0;
 }
 
 void process_event(char *msg_payload, struct Event *event)

@@ -73,7 +73,6 @@ int main(int argc, char *argv[])
         while (program_running) {
                 if (mosquitto_module_loop() != 0) {
                         syslog(LOG_ERR, "Error in mosquitto loop");
-                        break;
                 }
         }
         

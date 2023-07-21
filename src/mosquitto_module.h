@@ -5,6 +5,7 @@
 
 int mosquitto_module_init(struct Connection *connection);
 int mosquitto_module_loop();
+int mosquitto_module_reconnect();
 void mosquitto_module_terminate();
 
 #endif

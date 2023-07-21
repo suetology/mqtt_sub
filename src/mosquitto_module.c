@@ -64,7 +64,7 @@ int mosquitto_module_init(struct Connection *conn)
         mosquitto_message_callback_set(mosq, on_message);
         if (mosquitto_connect(mosq, conn->host, conn->port, 10) != MOSQ_ERR_SUCCESS) {
                 syslog(LOG_ERR, "Failed to connect to MQTT broker");
-                return 2;
+                return 1;
         }
 
         for (int i = 0; i < conn->topics_count; i++) 
