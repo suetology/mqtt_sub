@@ -2,41 +2,7 @@
 
 USE_PROCD=1
 
-command_args=''
-
-handle_event() {
-    local value_name value_type comp_type comp_value email password recipients message
-    config_get value_name $1 'value_name'
-    config_get value_type $1 'value_type'
-    config_get comp_value $1 'comp_value'
-    config_get email $1 'email'
-    config_get password $1 'password'
-    config_get recipients $1 'recipients'
-    config_get message $1 'message'
-
-    command_args="$command_args -e '{
-                \"topic_name\":\"$2\",
-                \"value_name\": \"$value_name\",
-                \"value_type\":\"$value_type\",
-                \"comp_value\":\"$comp_value\",
-                \"email\":\"$email\",
-                \"password\":\"$password\",
-                \"recipients\":\"$recipients\",
-                \"message\":\"$message\"
-                }' "
-}
-
-handle_topic() {
-    local event_sections="event_{$1}"
-    command_args="$command_args -t $1"
-
-    config_foreach handle_event $event_sections $1
-}
-
 start_service() {
-    config_load mqtt_sub
-    config_foreach handle_topic topic
-
     procd_open_instance
     procd_set_param command /usr/bin/mqtt_sub
     procd_set_param pidfile /var/run/mqtt_sub.pid
