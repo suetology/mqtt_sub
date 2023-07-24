@@ -73,6 +73,10 @@ struct Event *load_event(struct uci_section *section)
         char *password = get_option_value(section, "password");
         char *message = get_option_value(section, "message");
 
+        if (value_name == NULL || value_type_str == NULL || comp_type_str == NULL || comp_value_str == NULL
+         || email == NULL || password == NULL || message == NULL)
+                return NULL;
+
         union Value comp_value;
         enum ValueType value_type;
         enum CompType comp_type;
